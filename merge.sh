@@ -12,12 +12,21 @@ if (echo "$@" | grep -qe "^-h"); then
     exit
 fi
 
+readonly EXPECTED_FILE_NAME="audio_policy_configuration.xml"
+readonly INPUT_FILE="$1"
+readonly BASENAME=$(basename "$INPUT_FILE")
+
+if [[ "$BASENAME" != "$EXPECTED_FILE_NAME" ]]; then
+    echo "Error: This script only supports modification of $EXPECTED_FILE_NAME"
+    exit 1
+fi
+
 readonly HAL_DIRECTORY=hardware/interfaces/audio
 readonly SHARED_CONFIGS_DIRECTORY=frameworks/av/services/audiopolicy/config
 readonly NEW_VERSION=7.0
 readonly OLD_VERSION=6.0
 
-readonly SOURCE_CONFIG=${ANDROID_BUILD_TOP}/$1
+readonly SOURCE_CONFIG=${ANDROID_BUILD_TOP}/$INPUT_FILE
 
 echo Validating the source against the $NEW_VERSION schema
 xmllint --noout --xinclude \
